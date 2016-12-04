@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Template</title>
+
+
+
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <!-- Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+    <!--  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-resource.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.8/angular-ui-router.min.js"></script>
+
+    <!-- Angular Material Library -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <!-- The Controller -->
+    <script>
+        var app = angular.module('myApp', ['ngRoute', 'ngResource', 'ngMaterial', 'ngMessages', 'ui.router'])
+                .controller('myController', function($scope, $state, $http, $rootScope) {
+                    $scope.working = "Working";
+                    $scope.cb1 = false;
+                    $scope.projectName;
+                    $scope.divisions = ["Tox21", "RNAi", "Probe", "Chem Tech", "ADST", "TRND"];
+                    $scope.runTypes = ['Chemical Compound Screen', 'siRNA Process/Screen'];
+                    $scope.cellTypes = ['Cell Based', 'Biochemical'];
+                    $scope.plateTypes = ['Plate 1', 'Plate 2', 'Plate 3'];
+                    $scope.runPurposes = ['Small run for validation of new/troublesome project', 'New/Ongoing Screen'];
+                    $scope.spottingOrPinning = ['Spotting', 'Pinning'];
+                    $scope.includesControls = ["Yes", "No"];
+                    $scope.numberOfCellLines;
+                    $scope.matrixNumber;
+                    $scope.calculatePlates = function() {
+                        $scope.totalNumberOfPlates = (Number($scope.numberOfCellLines) * Number($scope.matrixNumber));
+                    };
+                    $scope.getMinimalVolume = function() {
+                        $scope.outPutMinimalVolume =
+                        $scope.stampedAssayVolume * $scope.numberReplicates * $scope.numberCellLines * $scope.numberConditions;
+                    };
+                    $scope.controlPlates = ["Yes", "No"];
+                    $scope.siRNAiRunTypes = ["Cherry Pick", "Library Stamping", "Screen"];
+                    $scope.exampleProtocol = "Reagent dispenses including volume, 384 to 384 stamping/96 to 384 stamping/96 to 96 stamping, centrifuging, reader and reader settings, incubation times and temperatures – room temp or 37oC, etc.";
+
+                });
+    </script>
+    <style>
+        .switchdemoBasicUsage .inset {
+            padding-left: 25px;
+            padding-top: 25px; }
+
+        md-card {
+            padding: 20px;
+        }
+    </style>
+
+</head>
+<body ng-app="myApp" style="padding-left: 20px; padding-top: 20px;">
+    <div ng-controller="myController">
+
+        <md-input-container style="width: 200px; padding-bottom: 0px; margin-bottom: 0px;">
+            <label>Project Name </label>
+            <input ng-model="projectName">
+        </md-input-container><br>
+
+        <md-input-container style="width: 200px;">
+            <label>Select the divsion: </label>
+            <md-select ng-model="divisionSelected">
+                <md-option><em>None</em></md-option>
+                <md-option ng-repeat="division in divisions" ng-value="division">
+                    {{division}}
+                </md-option>
+            </md-select>
+        </md-input-container><br>
+
+        <md-input-container style="width: 200px;">
+            <label>Select the type of run: </label>
+            <md-select ng-model="runTypeSelected">
+                <md-option><em>None</em></md-option>
+                <md-option ng-repeat="run in runTypes" ng-value="run">
+                    {{run}}
+                </md-option>
+            </md-select>
+        </md-input-container>
+
+        <div ng-show="runTypeSelected === 'Chemical Compound Screen'">
+            <md-card>
+                <label>Select the type of run: </label>
+                <md-select ng-model="cellTypeSelected">
+                    <md-option><em>None</em></md-option>
+                    <md-option ng-repeat="cellType in cellTypes" ng-value="cellType">
+                        {{cellType}}
+                    </md-option>
+                </md-select>
+
+                <div ng-show="cellTypeSelected === 'Cell Based'">
+                    <md-card>
+                        <md-input-container>
+                            <label>How many cell lines?</label>
+                            <input ng-model="numberOfCellLines">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Conditions</label>
+                            <input ng-model="conditions">
+                        </md-input-container>
+                        <md-input-container>
+                            <label>Modes</label>
+                            <input ng-model="modes">
+                        </md-input-container>
+                    </md-card>
+                </div>
+                <label>Select the type of plate: </label>
+                <md-select ng-model="plateTypeSelected">
+                    <md-option><em>None</em></md-option>
+                    <md-option ng-repeat="plateType in plateTypes" ng-value="plateType">
+                        {{plateType}}
+                    </md-option>
+                </md-select>
+                <label>Select the purpose of the run: </label>
+                <md-select ng-model="runPurposeSelected">
+                    <md-option><em>None</em></md-option>
+                    <md-option ng-repeat="runPurpose in runPurposes" ng-value="runPurpose">
+                        {{runPurpose}}
+                    </md-option>
+                </md-select>
+                <md-card ng-show="runPurposeSelected === 'New/Ongoing Screen'">
+                    <md-input-container>
+                        <label>Display/auto-input the libraries/concentrations which have been screened already:</label>
+                        <input ng-model="libraries">
+                    </md-input-container>
+                </md-card>
+                <label>Spotting or Pinning: </label>
+                <md-select ng-model="spotPinSelected">
+                    <md-option><em>None</em></md-option>
+                    <md-option ng-repeat="sptPn in spottingOrPinning" ng-value="sptPn">
+                        {{sptPn}}
+                    </md-option>
+                </md-select>
+                <md-card ng-show="spotPinSelected === 'Spotting'">
+                    <label>Is source plate including controls ready?</label>
+                    <md-select ng-model="includeControlsSelected">
+                        <md-option><em>None</em></md-option>
+                        <md-option ng-repeat="incControl in includesControls" ng-value="incControl">
+                            {{incControl}}
+                        </md-option>
+                    </md-select>
+                    <md-input-container>
+                        <label>How many plates will be needed for the matrix?</label>
+                        <input ng-model="matrixNumber" ng-change="calculatePlates()">
+                    </md-input-container>
+                    <label>Total number of plates : {{totalNumberOfPlates}}</label>
+                </md-card>
+                <md-card ng-show="spotPinSelected === 'Pinning'">
+                    <md-input-container>
+                        <label>What libraries will be used?</label>
+                        <input ng-model="librariesUsed">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>What concentrations will be used?</label>
+                        <input ng-model="concentrationsUsed">
+                    </md-input-container>
+                    <label>Total number of plates : {{totalNumberOfPlates}}</label><br><br>
+                    <label>Control plate for pinning?</label>
+                    <md-select ng-model="includeControlsSelected">
+                        <md-option><em>None</em></md-option>
+                        <md-option ng-repeat="controlPlate in controlPlates" ng-value="controlPlate">
+                            {{controlPlate}}
+                        </md-option>
+                    </md-select>
+                    <md-input-container>
+                        <label>What batch size are you comfortable with depending on reagent stability/cells etc?</label>
+                        <input ng-model="batchSize">
+                    </md-input-container>
+                </md-card>
+            </md-card>
+        </div>
+        <div ng-show="runTypeSelected === 'siRNA Process/Screen'">
+            <md-card>
+                <label>Select from cherry pick, library stamping, or screen:</label>
+                <md-select ng-model="siRNAiRunTypeSelected">
+                    <md-option><em>None</em></md-option>
+                    <md-option ng-repeat="siRNAiRunType in siRNAiRunTypes" ng-value="siRNAiRunType">
+                        {{siRNAiRunType}}
+                    </md-option>
+                </md-select>
+                <md-card ng-show="siRNAiRunTypeSelected === 'Cherry Pick'">
+                    <md-input-container>
+                        <label>List siRNA to be followed up on:</label>
+                        <input ng-model="siRNAFollowUp">
+                    </md-input-container>
+                        <label>Determine minimal volume needed:</label>
+                        <md-card>
+                            <md-input-container>
+                                <label>Input volume to be stamped in assay plate:</label>
+                                <input ng-model="stampedAssayVolume" ng-change="getMinimalVolume()">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Input number of replicates:</label>
+                                <input ng-model="numberReplicates" ng-change="getMinimalVolume()">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Input number of cell lines:</label>
+                                <input ng-model="numberCellLines" ng-change="getMinimalVolume()">
+                            </md-input-container>
+                            <md-input-container>
+                                <label>Input number of conditions:</label>
+                                <input ng-model="numberConditions" ng-change="getMinimalVolume()">
+                            </md-input-container>
+                            <label>Output minimal volume : {{outPutMinimalVolume}}</label>
+                        </md-card><br>
+                    <label>Select the type of plate: </label>
+                    <md-select ng-model="plateTypeSelected">
+                        <md-option><em>None</em></md-option>
+                        <md-option ng-repeat="plateType in plateTypes" ng-value="plateType">
+                            {{plateType}}
+                        </md-option>
+                    </md-select>
+                </md-card>
+                <md-card ng-show="siRNAiRunTypeSelected === 'Library Stamping'">
+                    <md-input-container>
+                        <label>Select library to be used:</label>
+                        <input ng-model="librarySelected">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>How many copies are needed?</label>
+                        <input ng-model="copiesNeeded">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>What assay plates are needed?</label>
+                        <input ng-model="assayPlatesNeeded">
+                    </md-input-container>
+                    <md-input-container>
+                        <label>Input volume needed to be stamped (in uL):</label>
+                        <input ng-model="volumeNeededToBeStamped">
+                    </md-input-container>
+                </md-card>
+                <md-card ng-show="siRNAiRunTypeSelected === 'Screen'">
+                    <md-input-container>
+                        <label>Plate Type:</label>
+                        <input ng-model="plateType">
+                    </md-input-container>
+                    <div layout="row">
+                        <md-input-container class="md-block" flex="50">
+                            <label>Enter Protocol:</label>
+                            <textarea ng-model="protocol"  rows="4"></textarea>
+                        </md-input-container>
+                        <md-card flex="50">
+                            <label>Example Protocol:</label>
+                            {{exampleProtocol}}
+                        </md-card>
+                    </div>
+                </md-card>
+            </md-card>
+        </div><br><br>
+        <label>Preferred date and time:</label>
+        <div layout="row">
+            <md-card flex="25">
+                <md-input-container>
+                    <label>Preferred Dates</label>
+                    <input ng-model="preferredDates">
+                </md-input-container>
+            </md-card>
+            <md-card flex="25">
+                <md-input-container>
+                    <label>Preferred Times</label>
+                    <input ng-model="preferredTimes">
+                </md-input-container>
+            </md-card>
+        </div>
+        <md-input-container>
+            <label>Additional Comments</label>
+            <textarea rows="3" ng-model="comments"></textarea>
+        </md-input-container>
+    </div>
+</body>
+</html>
