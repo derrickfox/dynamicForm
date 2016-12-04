@@ -12,6 +12,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <!--  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.js"></script>  -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
@@ -26,10 +27,10 @@
     <!-- The Controller -->
     <script>
         var app = angular.module('myApp', ['ngRoute', 'ngResource', 'ngMaterial', 'ngMessages', 'ui.router'])
-                .controller('myController', function($scope, $state, $http, $rootScope) {
-                    $scope.working = "Working";
-                    $scope.cb1 = false;
-                    $scope.projectName;
+                .controller('myController', function($scope, $mdDialog, $state, $http, $rootScope) {
+
+                    $rootScope.test = "First";
+                    $scope.projectName = "Scope's Project Name";
                     $scope.divisions = ["Tox21", "RNAi", "Probe", "Chem Tech", "ADST", "TRND"];
                     $scope.runTypes = ['Chemical Compound Screen', 'siRNA Process/Screen'];
                     $scope.cellTypes = ['Cell Based', 'Biochemical'];
@@ -50,6 +51,83 @@
                     $scope.siRNAiRunTypes = ["Cherry Pick", "Library Stamping", "Screen"];
                     $scope.exampleProtocol = "Reagent dispenses including volume, 384 to 384 stamping/96 to 384 stamping/96 to 96 stamping, centrifuging, reader and reader settings, incubation times and temperatures – room temp or 37oC, etc.";
 
+                    $scope.runObject = {
+                        projectName : "Nope",
+                        divisionSelected: null,
+                        runTypeSelected: null,
+                        cellTypeSelected: null,
+                        numberOfCellLines: null,
+                        conditions: null,
+                        modes: null,
+                        plateTypeSelected: null,
+                        runPurposeSelected: null,
+                        librariesAlreadyScreened: null,
+                        spotPinSelected: null,
+                        includeControlsSelected: null,
+                        matrixNumber: null,
+                        concentrationsUsed: null,
+                        batchSize: null,
+                        siRNAiRunTypeSelected: null,
+                        siRNAFollowUp: null,
+                        stampedAssayVolume: null,
+                        numberReplicates: null,
+                        numberCellLines: null,
+                        numberConditions: null,
+                        librariesSelected: null,
+                        copiesNeeded: null,
+                        assayPlatesNeeded: null,
+                        volumeNeededToBeStamped: null,
+                        plateType: null,
+                        protocol: null,
+                        preferredDates: null,
+                        preferredTimes: null,
+                        comments: null
+                    };
+
+
+
+                    $scope.hide = function() {
+                        $mdDialog.hide();
+                    };
+
+                    $scope.cancel = function() {
+                        $mdDialog.cancel();
+                    };
+
+                    $scope.answer = function(answer) {
+                        $mdDialog.hide(answer);
+                    };
+
+
+                    $scope.findNotNull = function(obj){
+                        var keys = [];
+                        var string = "";
+                        _.each( obj, function( val, key ) {
+                            if ( val ) {
+                                keys.push(key);
+
+                            }
+                        });
+
+                    }
+
+                    var mdDialogCtrl = function ($scope, dataToPass) {
+                        $scope.mdDialogData = dataToPass
+                    }
+
+                    $scope.showRequest = function(ev) {
+                        $mdDialog.show({
+                            locals:{dataToPass: $scope.runObject},
+                            controller: mdDialogCtrl,
+                            controllerAs: 'ctrl',
+                            templateUrl: 'tmpl.html',
+                            parent: angular.element(document.body),
+                            targetEvent: ev,
+                            clickOutsideToClose:true,
+                            fullscreen: $scope.customFullscreen // Only for -xs, -sm breakpoints.
+                        });
+                    };
+
                 });
     </script>
     <style>
@@ -66,14 +144,15 @@
 <body ng-app="myApp" style="padding-left: 20px; padding-top: 20px;">
     <div ng-controller="myController">
 
+        <md-button class="md-primary md-raised" ng-click="showRequest()">Submit Request</md-button><br>
         <md-input-container style="width: 200px; padding-bottom: 0px; margin-bottom: 0px;">
             <label>Project Name </label>
-            <input ng-model="projectName">
+            <input ng-model="test">
         </md-input-container><br>
 
         <md-input-container style="width: 200px;">
             <label>Select the divsion: </label>
-            <md-select ng-model="divisionSelected">
+            <md-select ng-model="runObject.divisionSelected">
                 <md-option><em>None</em></md-option>
                 <md-option ng-repeat="division in divisions" ng-value="division">
                     {{division}}
@@ -133,8 +212,8 @@
                 </md-select>
                 <md-card ng-show="runPurposeSelected === 'New/Ongoing Screen'">
                     <md-input-container>
-                        <label>Display/auto-input the libraries/concentrations which have been screened already:</label>
-                        <input ng-model="libraries">
+                        <label>Which libraries/concentrations have been screened already?</label>
+                        <input ng-model="librariesAlreadyScreened">
                     </md-input-container>
                 </md-card>
                 <label>Spotting or Pinning: </label>
@@ -161,7 +240,7 @@
                 <md-card ng-show="spotPinSelected === 'Pinning'">
                     <md-input-container>
                         <label>What libraries will be used?</label>
-                        <input ng-model="librariesUsed">
+                        <input ng-model="librariesSelected">
                     </md-input-container>
                     <md-input-container>
                         <label>What concentrations will be used?</label>
@@ -227,7 +306,7 @@
                 <md-card ng-show="siRNAiRunTypeSelected === 'Library Stamping'">
                     <md-input-container>
                         <label>Select library to be used:</label>
-                        <input ng-model="librarySelected">
+                        <input ng-model="librariesSelected">
                     </md-input-container>
                     <md-input-container>
                         <label>How many copies are needed?</label>
@@ -235,7 +314,7 @@
                     </md-input-container>
                     <md-input-container>
                         <label>What assay plates are needed?</label>
-                        <input ng-model="assayPlatesNeeded">
+                        <input ng-model="plateTypeSelected">
                     </md-input-container>
                     <md-input-container>
                         <label>Input volume needed to be stamped (in uL):</label>
